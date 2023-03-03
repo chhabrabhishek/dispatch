@@ -36,6 +36,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   libadwaita: ^1.2.5
+  libadwaita_bitsdojo: ^0.5.5
+  adwaita: ^0.5.2
 
 dev_dependencies:
   flutter_test:
