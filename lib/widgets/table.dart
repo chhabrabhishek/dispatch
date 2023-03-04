@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:libadwaita/libadwaita.dart';
 import 'package:collection/collection.dart';
+import 'package:libadwaita/libadwaita.dart';
+import 'package:file_picker/file_picker.dart';
 
 class TableWidget extends StatefulWidget {
-  const TableWidget({super.key});
+  const TableWidget({super.key, required this.isFileSelectIncluded});
+
+  final bool isFileSelectIncluded;
 
   @override
   State<TableWidget> createState() => _TableWidgetState();
@@ -13,6 +17,27 @@ class _TableWidgetState extends State<TableWidget> {
   static List<TableModel> tableModelList = [
     TableModel("", "", true, TextEditingController(), TextEditingController())
   ];
+
+  void _pickFile(index) async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    if (result != null) {
+      setState(
+        () {
+          tableModelList[index].fileName = "";
+          // List<File> files = result.paths.map((path) => File(path!)).toList();
+          result.files.forEach(
+            (element) {
+              tableModelList[index].fileName += '${element.name};';
+            },
+          );
+        },
+      );
+    } else {
+      print("No Files selected.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +49,9 @@ class _TableWidgetState extends State<TableWidget> {
                 (index, item) => Row(
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.45,
+                      width: widget.isFileSelectIncluded
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.45,
                       height: 30,
                       child: TextField(
                         controller: item.paramTextEditingController,
@@ -67,7 +94,9 @@ class _TableWidgetState extends State<TableWidget> {
                       ),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.45,
+                      width: widget.isFileSelectIncluded
+                          ? MediaQuery.of(context).size.width * 0.35
+                          : MediaQuery.of(context).size.width * 0.45,
                       height: 30,
                       child: TextField(
                         controller: item.valueTextEditingController,
@@ -109,6 +138,37 @@ class _TableWidgetState extends State<TableWidget> {
                         ),
                       ),
                     ),
+                    widget.isFileSelectIncluded
+                        ? SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.2,
+                            child: Container(
+                              height: 30,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 0.2,
+                                ),
+                              ),
+                              child: AdwButton(
+                                margin: const EdgeInsets.all(2),
+                                onPressed: () => {_pickFile(index)},
+                                child: Text(
+                                  item.fileName == ""
+                                      ? 'Choose Files'
+                                      : item.fileName,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      decoration: TextDecoration.none,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.normal),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox(
+                            width: 0,
+                          ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.05,
                       child: Container(
@@ -205,6 +265,8 @@ class TableModel {
   bool isEnabled;
   TextEditingController paramTextEditingController;
   TextEditingController valueTextEditingController;
+  String fileName;
   TableModel(this.param, this.value, this.isEnabled,
-      this.paramTextEditingController, this.valueTextEditingController);
+      this.paramTextEditingController, this.valueTextEditingController,
+      [this.fileName = ""]);
 }

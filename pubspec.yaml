@@ -38,6 +38,7 @@ dependencies:
   libadwaita: ^1.2.5
   libadwaita_bitsdojo: ^0.5.5
   adwaita: ^0.5.2
+  file_picker: ^5.2.5
 
 dev_dependencies:
   flutter_test:

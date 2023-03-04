@@ -19,7 +19,9 @@ class MyApp extends StatelessWidget {
       darkTheme: AdwaitaThemeData.dark(),
       debugShowCheckedModeBanner: false,
       home: const Scaffold(
-        body: TableWidget(),
+        body: TableWidget(
+          isFileSelectIncluded: true,
+        ),
       ),
     );
   }
