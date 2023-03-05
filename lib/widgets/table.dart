@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:libadwaita/libadwaita.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:dispatch/models/table-model.dart';
 
 class TableWidget extends StatefulWidget {
-  const TableWidget({super.key, required this.isFileSelectIncluded});
+  const TableWidget(
+      {super.key, required this.isFileSelectIncluded, required this.hintText});
 
   final bool isFileSelectIncluded;
+  final String hintText;
 
   @override
   State<TableWidget> createState() => _TableWidgetState();
@@ -40,6 +43,11 @@ class _TableWidgetState extends State<TableWidget> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -47,6 +55,7 @@ class _TableWidgetState extends State<TableWidget> {
           children: tableModelList
               .mapIndexed(
                 (index, item) => Row(
+                  key: UniqueKey(),
                   children: [
                     SizedBox(
                       width: widget.isFileSelectIncluded
@@ -59,7 +68,7 @@ class _TableWidgetState extends State<TableWidget> {
                           tableModelList[index].param = text;
                         },
                         decoration: InputDecoration(
-                          hintText: 'Parameter ${index + 1}',
+                          hintText: '${widget.hintText} ${index + 1}',
                           hintStyle: const TextStyle(
                             fontWeight: FontWeight.w100,
                             fontSize: 10,
@@ -213,7 +222,7 @@ class _TableWidgetState extends State<TableWidget> {
                           ),
                           color: Colors.red,
                           onPressed: () => {
-                            if (tableModelList.length != 1)
+                            if (tableModelList.isNotEmpty)
                               {
                                 setState(
                                   () => {
@@ -257,16 +266,4 @@ class _TableWidgetState extends State<TableWidget> {
       ],
     );
   }
-}
-
-class TableModel {
-  String param;
-  String value;
-  bool isEnabled;
-  TextEditingController paramTextEditingController;
-  TextEditingController valueTextEditingController;
-  String fileName;
-  TableModel(this.param, this.value, this.isEnabled,
-      this.paramTextEditingController, this.valueTextEditingController,
-      [this.fileName = ""]);
 }
